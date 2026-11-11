@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lucas Jussen · IA &amp; Automação</title>
+<meta name="description" content="Lucas Jussen — Analista de IA e Automação. Pergunte qualquer coisa sobre meu trabalho.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lucas Jussen · IA &amp; Automação">
+<meta property="og:description" content="Pergunte qualquer coisa sobre meu trabalho com automação e IA.">
+<meta property="og:image" content="https://lucasjussen.github.io/og.png">
+<meta property="og:url" content="https://lucasjussen.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect x='6' y='6' width='108' height='108' rx='38' fill='%23000' stroke='%23f2f2f0' stroke-width='8'/%3E%3Cellipse cx='43' cy='54' rx='8' ry='12' fill='%23f2f2f0'/%3E%3Cellipse cx='77' cy='54' rx='8' ry='12' fill='%23f2f2f0'/%3E%3Cpath d='M44 80 Q60 90 76 80' fill='none' stroke='%23f2f2f0' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000;
+    --fg:#f2f2f0;
+    --dim:#8a8a8a;
+    --faint:#3a3a3a;
+    --line:#1f1f1f;
+    --accent:#7aa2ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{display:flex;flex-direction:column;align-items:center;min-height:100%;overflow-x:hidden}
+
+  main{width:100%;max-width:680px;padding:0 20px;display:flex;flex-direction:column;align-items:center;flex:1}
+  body:not(.chatting){justify-content:center}
+  body:not(.chatting) main{flex:0}
+  body:not(.chatting) .thread{display:none}
+  .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;transition:padding .6s ease;padding-top:0}
+  body.chatting .stage{padding-top:5vh}
+
+  /* ---------- rosto ---------- */
+  .face{width:132px;height:132px;transition:width .6s ease,height .6s ease;cursor:pointer}
+  body.chatting .face{width:84px;height:84px}
+  .face .head{fill:none;stroke:var(--fg);stroke-width:3}
+  .face .eye{fill:var(--fg);transform-box:fill-box;transform-origin:center;transition:transform .12s ease}
+  .face.blink .eye{transform:scaleY(.08)}
+  .face .mouth{fill:none;stroke:var(--fg);stroke-width:3;stroke-linecap:round;transition:d .3s ease}
+  .face.thinking .eye{transform:scaleY(.55)}
+  .face.talking .mouth{animation:talk .22s ease-in-out infinite alternate}
+  @keyframes talk{from{d:path("M46 80 Q60 86 74 80")}to{d:path("M48 79 Q60 92 72 79")}}
+
+  .name{margin:22px 0 4px;font-size:15px;font-weight:600;letter-spacing:.2px}
+  .role{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--dim);letter-spacing:.5px}
+  body.chatting .name,body.chatting .role{display:none}
+
+  /* ---------- conversa ---------- */
+  .thread{width:100%;margin-top:28px;display:flex;flex-direction:column;gap:22px;padding-bottom:200px}
+  .q{align-self:flex-end;max-width:85%;color:var(--dim);font-size:14px;text-align:right}
+  .a{font-size:15.5px;line-height:1.65;color:var(--fg)}
+  .a p{margin:0 0 10px}
+  .a ul{margin:0 0 10px;padding-left:18px}
+  .a li{margin:0 0 6px}
+  .a b{font-weight:600}
+  .a a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(122,162,255,.35)}
+  .a a:hover{border-bottom-color:var(--accent)}
+  .a .tag{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--dim)}
+  .cursor{display:inline-block;width:7px;height:15px;background:var(--fg);vertical-align:-2px;margin-left:2px;animation:bl 1s steps(1) infinite}
+  @keyframes bl{50%{opacity:0}}
+
+  /* ---------- busca ---------- */
+  .dock{width:100%;max-width:680px;padding:0 20px;transition:all .6s ease}
+  body:not(.chatting) .dock{margin-top:40px}
+  body.chatting .dock{position:fixed;bottom:0;left:50%;transform:translateX(-50%);padding-bottom:20px;padding-top:30px;background:linear-gradient(transparent,#000 35%)}
+  form{display:flex;align-items:center;gap:10px;border:1px solid var(--faint);border-radius:999px;padding:6px 6px 6px 20px;background:#0a0a0a;transition:border-color .2s}
+  form:focus-within{border-color:#5a5a5a}
+  input{flex:1;background:none;border:0;outline:0;color:var(--fg);font:inherit;font-size:15px;padding:10px 0;min-width:0}
+  input::placeholder{color:#5f5f5f}
+  button.send{width:40px;height:40px;border-radius:50%;border:0;background:var(--fg);color:#000;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:opacity .2s}
+  button.send:disabled{opacity:.25;cursor:default}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+  body.chatting .chips{justify-content:flex-start;margin-top:10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent)}
+  body.chatting .chips::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap;flex-shrink:0}
+  .chip{font-family:inherit;font-size:13px;color:var(--dim);background:none;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;transition:all .2s}
+  .chip:hover{color:var(--fg);border-color:var(--faint)}
+
+  .note{text-align:center;margin-top:14px;font-family:"JetBrains Mono",monospace;font-size:11px;color:#4a4a4a}
+  body.chatting .note{display:none}
+  .face:focus-visible{outline:1px dashed #555;outline-offset:6px;border-radius:44px}
+  .home{display:none;font-family:"JetBrains Mono",monospace;font-size:11px;color:#5f5f5f;background:none;border:0;cursor:pointer;margin-top:10px;padding:6px}
+  body.chatting .home{display:block}
+  .home:hover{color:var(--fg)}
+  footer{width:100%;max-width:680px;padding:28px 20px 24px;display:flex;justify-content:center;gap:22px;font-family:"JetBrains Mono",monospace;font-size:12px}
+  footer a{color:#5f5f5f;text-decoration:none;transition:color .2s}
+  footer a:hover{color:var(--fg)}
+  body.chatting footer{display:none}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<main>
+  <div class="stage">
+    <svg class="face" id="face" viewBox="0 0 120 120" role="img" aria-label="Rosto do Lucas" tabindex="0">
+      <rect class="head" x="6" y="6" width="108" height="108" rx="38"/>
+      <g id="eyes">
+        <ellipse class="eye" cx="43" cy="54" rx="6" ry="9"/>
+        <ellipse class="eye" cx="77" cy="54" rx="6" ry="9"/>
+      </g>
+      <path class="mouth" d="M46 80 Q60 86 74 80"/>
+    </svg>
+    <div class="name">Lucas Jussen</div>
+    <div class="role">IA &amp; AUTOMAÇÃO · CURITIBA</div>
+    <button class="home" id="home" type="button">← início</button>
+  </div>
+
+  <div class="thread" id="thread" aria-live="polite"></div>
+</main>
+
+<div class="dock">
+  <form id="ask">
+    <input id="input" autocomplete="off" placeholder="Pergunte qualquer coisa sobre mim…" aria-label="Pergunta">
+    <button class="send" id="send" disabled aria-label="Enviar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+  </form>
+  <div class="chips" id="chips"></div>
+  <div class="note">respostas escritas por mim · aperte / para perguntar</div>
+</div>
+
+<footer>
+  <a href="https://linkedin.com/in/lucasjussen">linkedin</a>
+  <a href="https://github.com/lucasjussen">github</a>
+  <a href="https://github.com/lucasjussen/ai-automation-portfolio">projetos</a>
+  <a href="curriculo.pdf">currículo</a>
+</footer>
+
+<script>
+/* ============================================================
+   Respostas escritas pelo Lucas. Cada tema tem palavras-chave;
+   a pergunta é comparada com elas e o tema com mais pontos vence.
+   Para editar: mude o texto em "a" ou acrescente palavras em "k".
+   ============================================================ */
+
+const L = {
+  linkedin: '<a href="https://linkedin.com/in/lucasjussen">LinkedIn</a>',
+  github: '<a href="https://github.com/lucasjussen/ai-automation-portfolio">GitHub</a>',
+  cv: '<a href="curriculo.pdf">currículo em PDF</a>'
+};
+
+const KB = [
+  { id:"oi", k:["oi","ola","bom dia","boa tarde","boa noite","e ai","hello","hi"],
+    a:`<p>Oi! Sou o Lucas. Pode perguntar sobre meus projetos, as ferramentas que uso ou como falar comigo.</p>` },
+
+  { id:"obrigado", k:["obrigad","valeu","agradec","show","legal","massa","top"],
+    a:`<p>Eu que agradeço a visita! Se quiser conversar, me chama no ${L.linkedin}.</p>` },
+
+  { id:"sobre", k:["quem","sobre voce","se apresent","apresentacao","resumo","quem e","fale de voce","fala de voce","o que voce faz"],
+    a:`<p>Sou o Lucas, analista de IA e automação em Curitiba. Pego rotinas manuais, entendo como elas funcionam de verdade e transformo em fluxos que rodam sozinhos, deixando a pessoa só onde o julgamento humano faz diferença.</p>
+       <p>No último emprego fui o único responsável por IA e automação da empresa e coloquei <b>15 automações e sistemas internos em produção</b>, usados por RH, jurídico, operacional, comercial, marketing e TI.</p>` },
+
+  { id:"projetos", k:["automatiz","projeto","fez","criou","construiu","exemplo","producao","entreg","resultado","ganho","portfolio","trabalhos"],
+    a:`<p>Alguns dos que mais geraram resultado:</p>
+       <ul>
+         <li><b>Conferência documental com IA</b>: lê e-mails, extrai os PDFs e confere os valores com a API do Claude. Devolveu cerca de <b>3 dias de trabalho por ciclo</b> ao jurídico.</li>
+         <li><b>Banco de horas</b>: criado do zero. Pipeline diário em n8n; cada funcionário passou a consultar o próprio saldo.</li>
+         <li><b>Bot de chamados de TI</b>: comando <span class="tag">/chamado</span> no chat, fila centralizada e status visível para a coordenação.</li>
+         <li><b>Recrutamento &amp; Seleção</b>: funil da triagem ao onboarding, com e-mails automáticos.</li>
+         <li><b>Painel de SDRs</b>: planilha → PostgreSQL → API → painel em tempo real.</li>
+       </ul>
+       <p>Pergunte sobre qualquer um deles.</p>` },
+
+  { id:"conferencia", k:["conferencia","document","pdf","valores","financeir","claude api","3 dias","tres dias"],
+    a:`<p>O jurídico conferia valores de documentos financeiros na mão. Montei um fluxo que lê a caixa de e-mail via Microsoft Graph, extrai os PDFs, manda para a API do Claude conferir e registra cada caso no CRM.</p>
+       <p>Casos conformes seguem sozinhos; divergentes vão para validação humana. Um detalhe técnico: o conector nativo de e-mail tinha uma limitação, então chamei a API diretamente.</p>
+       <p>Resultado: <b>cerca de 3 dias de trabalho devolvidos por ciclo</b>.</p>
+       <p class="tag">n8n · Microsoft Graph · Claude API · Bitrix24</p>` },
+
+  { id:"rag", k:["rag","lgpd","eval","avalia","vetor","embedding","pgvector","ollama","busca semantica"],
+    a:`<p>Construí um assistente que responde dúvidas sobre a <b>LGPD</b> apenas com base no texto oficial da lei, citando o artigo, e recusa o que está fora do escopo.</p>
+       <p>O que mais me ensinou foi medir: criei um <b>eval automatizado de 10 casos</b> (10/10). E mesmo com nota máxima, ele revelou quando o agente respondia sem consultar a base, um problema que a nota sozinha escondia.</p>
+       <p class="tag">n8n · Ollama · PostgreSQL/pgvector · Docker · Claude</p>
+       <p>Código e detalhes no ${L.github}.</p>` },
+
+  { id:"agentes", k:["agente","agent","llm","ia generativa","prompt","modelo de linguagem","inteligencia artificial"],
+    a:`<p>Uso IA generativa todos os dias, tanto para desenvolver quanto dentro das soluções. Trabalho principalmente com a API do Claude: engenharia de prompt com papéis definidos, dados delimitados por tags XML e saída estruturada em JSON.</p>
+       <p>Já construí agentes com ferramentas e RAG, e gosto de colocar <b>validação humana</b> onde o erro custa caro. Também meço a qualidade com evals, em vez de confiar no "parece bom".</p>` },
+
+  { id:"horas", k:["banco de horas","horas","ponto","saldo","pontomais"],
+    a:`<p>A empresa não tinha banco de horas. Criei do zero: um pipeline diário em n8n lê os registros de ponto, cruza os funcionários por nome (ignorando acentos), calcula os saldos e publica no Bitrix24 com permissão individual. Cada funcionário vê só o próprio saldo.</p>
+       <p>Para evitar a API paga do sistema de ponto, usei Google Sheets como fonte de dados. O RH deixou de fazer conferência manual.</p>` },
+
+  { id:"bot", k:["bot","chamado","suporte","helpdesk","ticket"],
+    a:`<p>Não havia um ponto central de chamados; os pedidos chegavam espalhados em conversas. Criei do zero o bot "Suporte TI" no chat do Bitrix24: o colaborador digita <span class="tag">/chamado</span>, o pedido entra numa fila com responsável e etapas, e a coordenação acompanha tudo em um só lugar.</p>
+       <p>Implantei na empresa com um vídeo demonstrativo para todo mundo aprender a usar.</p>` },
+
+  { id:"rs", k:["recrutamento","selecao","r&s","candidato","rh","onboarding","entrevista"],
+    a:`<p>Montei no Bitrix24 o funil completo de Recrutamento &amp; Seleção, da triagem ao onboarding: nomeação automática dos cards, campos obrigatórios por etapa, e-mails automáticos aos candidatos, lembrete dois dias após a entrevista e criação automática da tarefa de onboarding de TI na contratação.</p>
+       <p>Resultado: fim do controle manual e nenhum candidato sem retorno.</p>` },
+
+  { id:"sdr", k:["sdr","painel","dashboard","supabase","ranking","remarketing","bi","power bi"],
+    a:`<p>Para a gestão acompanhar os SDRs, sincronizei a planilha deles com um PostgreSQL (Supabase) via n8n, criei uma API por webhook e um painel web com ranking e filtros. A gestão passou a ver a operação em tempo real, sem consolidar planilhas.</p>
+       <p>Ainda não trabalhei com Power BI, mas dashboards alimentados por banco de dados já fazem parte do meu dia a dia.</p>` },
+
+  { id:"crm", k:["crm","omnichannel","prospec","whatsapp","instagram","meta"],
+    a:`<p>Projetei e desenvolvi um CRM que une Instagram, WhatsApp e e-mail em um único funil para 40 SDRs, com n8n, Bitrix24, APIs da Meta e a API do Claude.</p>
+       <p>Sendo transparente: ele foi publicado, mas não chegou a operar porque a empresa encerrou as atividades.</p>` },
+
+  { id:"stack", k:["ferramenta","stack","tecnolog","usa","sabe","n8n","api","integra","webhook","docker","excel","sheets","apps script"],
+    a:`<ul>
+         <li><b>IA:</b> API do Claude, engenharia de prompt, agentes, RAG, embeddings, evals</li>
+         <li><b>Automação:</b> n8n self-hosted, webhooks, APIs REST, Microsoft Graph, APIs da Meta, Bitrix24</li>
+         <li><b>Dados:</b> PostgreSQL, pgvector, Supabase, SQL, Excel, Google Sheets e Apps Script</li>
+         <li><b>Infra:</b> Docker, Ollama, VPS Linux, Git</li>
+         <li><b>Linguagens:</b> JavaScript, SQL, PowerShell, Python</li>
+       </ul>` },
+
+  { id:"codigo", k:["python","programa","codigo","javascript","linguagem","java","sql"],
+    a:`<p>No dia a dia escrevo JavaScript dentro dos fluxos do n8n, SQL para os bancos e PowerShell para automações de TI. Uso Python para scripts e sigo me aprofundando nele.</p>
+       <p>Trabalho com IA ao lado na hora de programar, mas faço questão de entender o que o código faz antes de colocar em produção.</p>` },
+
+  { id:"trajetoria", k:["juridic","advoc","escritorio","antes","historia","carreira","trajet","anos"],
+    a:`<p>Antes da tecnologia, passei 4 anos na rotina jurídica de uma assessoria financeira, emitindo guias para Tribunais de Justiça e conduzindo ajuizamento de contratos.</p>
+       <p>Em 2026 fui para a área de IA e automação. Essa bagagem me ensinou o que uso todo dia: automação boa começa entendendo o processo e quem está nele, não pela ferramenta.</p>` },
+
+  { id:"jeito", k:["como trabalha","como voce trabalha","processo","metodo","jeito","diferencial","por que","contratar","soft","perfil","qualidade"],
+    a:`<p>Começo pelo processo, não pela ferramenta: converso com a área, entendo onde está o retrabalho e só então desenho o fluxo. Depois que entra em operação, acompanho e ajusto.</p>
+       <p>Gosto de medir resultado, seja em dias de trabalho economizados ou em casos de teste aprovados, e de deixar a pessoa decidindo onde o julgamento humano importa.</p>` },
+
+  { id:"formacao", k:["forma","estud","faculdade","curso","certific","puc","academy","graduacao"],
+    a:`<p>Curso Análise e Desenvolvimento de Sistemas na PUCPR (EAD) e tenho certificação da Anthropic (Claude Academy). Sigo estudando IA todos os dias: agentes, MCP e avaliação de modelos.</p>` },
+
+  { id:"idioma", k:["ingles","idioma","english","lingua"],
+    a:`<p>Tenho inglês intermediário: leio documentação técnica no dia a dia sem problema e sigo praticando a conversação.</p>` },
+
+  { id:"local", k:["onde mora","mora","cidade","curitiba","pinhais","remoto","presencial","hibrido","mudar"],
+    a:`<p>Moro na região de Curitiba (PR). Tenho disponibilidade para presencial e híbrido na região, e também topo remoto.</p>` },
+
+  { id:"salario", k:["salario","pretensao","quanto cobra","remuneracao","valor"],
+    a:`<p>Prefiro conversar sobre isso diretamente, considerando a vaga e o formato. Me chama no ${L.linkedin}.</p>` },
+
+  { id:"contato", k:["contato","falar","contrat","email","vaga","conversar","linkedin","disponivel","curriculo","cv","oportunidade"],
+    a:`<p>Estou aberto a oportunidades como analista de IA e automação. O melhor caminho é o ${L.linkedin}.</p>
+       <p>Você também pode baixar o meu ${L.cv} ou ver os projetos no ${L.github}.</p>` },
+
+  { id:"outras", k:["make","zapier","power automate","langchain","langgraph","crewai","uipath","rpa","openai","gpt","chatgpt","gemini"],
+    a:`<p>Minha ferramenta principal é o n8n, e a API que mais uso é a do Claude. Make, Zapier e Power Automate seguem a mesma lógica de gatilhos, ações e integrações por API, então a adaptação é rápida. O Power Automate, inclusive, está nos meus estudos.</p>
+       <p>LangChain e LangGraph ainda não usei em projeto; estão na fila, junto com Python para agentes. Prefiro dizer isso do que fingir que domino.</p>` },
+
+  { id:"site", k:["site","esse chat","uma ia","e ia","chatbot","como funciona","ia de verdade","voce e uma ia","robo"],
+    a:`<p>Este chat não é uma IA: eu mesmo escrevi as respostas e o site encontra a mais próxima da sua pergunta. Preferi assim para não inventar nada sobre mim.</p>
+       <p>Se quiser ver IA de verdade, dá uma olhada no RAG da LGPD no ${L.github}.</p>` }
+];
+
+const CHIPS = ["O que você já automatizou?","Me fala do RAG da LGPD","Quais ferramentas você usa?","Como falar com você?"];
+const RELATED = {
+  sobre:["O que você já automatizou?","Como você trabalha?"],
+  projetos:["Conta da conferência documental","Como foi o banco de horas?","E o bot de chamados?"],
+  conferencia:["Como foi o banco de horas?","Me fala do RAG da LGPD"],
+  rag:["Você trabalha com agentes?","Quais ferramentas você usa?"],
+  agentes:["Me fala do RAG da LGPD","O que você já automatizou?"],
+  horas:["E o bot de chamados?","Quais ferramentas você usa?"],
+  bot:["Como foi o banco de horas?","Como falar com você?"],
+  stack:["Você programa em Python?","O que você já automatizou?"],
+  trajetoria:["Como você trabalha?","O que você já automatizou?"],
+  contato:["O que você já automatizou?","Onde você mora?"]
+};
+
+const norm = s => " " + s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9&\s]/g," ").replace(/\s+/g," ") + " ";
+
+function findAnswer(q){
+  const t = norm(q);
+  let best=null, score=0;
+  for(const item of KB){
+    let s=0;
+    for(const k of item.k){
+      const nk = norm(k).trim();
+      if(!nk) continue;
+      const short = nk.length <= 3;               // palavras curtas só valem inteiras
+      const hit = short ? t.includes(" "+nk+" ") : t.includes(nk);
+      if(hit) s += nk.includes(" ") ? 3 : (nk.length > 5 ? 2 : 1);
+    }
+    if(s>score){score=s;best=item;}
+  }
+  if(best) return { html:best.a, id:best.id };
+  return { id:null, html:`<p>Essa eu ainda não respondo por aqui, mas posso te contar na conversa. Me chama no ${L.linkedin}.</p>
+     <p>Por aqui, posso falar dos meus projetos, das ferramentas que uso, do RAG da LGPD ou da minha trajetória.</p>` };
+}
+
+/* ---------- rosto: olhar, piscar, pensar, falar ---------- */
+const face = document.getElementById("face"), eyes = document.getElementById("eyes");
+function look(x,y){
+  const r = face.getBoundingClientRect();
+  const dx = x-(r.left+r.width/2), dy = y-(r.top+r.height/2);
+  const d = Math.hypot(dx,dy)||1, m = Math.min(5, d/40);
+  eyes.setAttribute("transform",`translate(${(dx/d*m).toFixed(2)} ${(dy/d*m).toFixed(2)})`);
+}
+addEventListener("pointermove",e=>look(e.clientX,e.clientY));
+function blink(){ face.classList.add("blink"); setTimeout(()=>face.classList.remove("blink"),130); }
+(function loop(){ setTimeout(()=>{ blink(); loop(); }, 2600+Math.random()*3200); })();
+
+/* ---------- conversa ---------- */
+const form=document.getElementById("ask"), input=document.getElementById("input"),
+      send=document.getElementById("send"), thread=document.getElementById("thread"),
+      chips=document.getElementById("chips"), home=document.getElementById("home");
+let busy=false; const asked=new Set();
+
+function renderChips(list){
+  chips.innerHTML="";
+  list.filter(c=>!asked.has(c)).slice(0,4).forEach(c=>{
+    const b=document.createElement("button"); b.className="chip"; b.type="button"; b.textContent=c;
+    b.onclick=()=>ask(c); chips.appendChild(b);
+  });
+}
+renderChips(CHIPS);
+
+input.addEventListener("input",()=>send.disabled=!input.value.trim()||busy);
+form.addEventListener("submit",e=>{e.preventDefault(); if(input.value.trim()) ask(input.value.trim());});
+addEventListener("keydown",e=>{
+  if(e.key==="/" && document.activeElement!==input){ e.preventDefault(); input.focus(); }
+  if(e.key==="Escape" && document.body.classList.contains("chatting")) reset();
+});
+
+function reset(){
+  if(busy) return;
+  thread.innerHTML=""; asked.clear();
+  document.body.classList.remove("chatting");
+  renderChips(CHIPS); scrollTo({top:0});
+}
+home.addEventListener("click",reset);
+face.addEventListener("click",()=>{ blink(); });
+face.addEventListener("keydown",e=>{ if(e.key==="Enter") reset(); });
+
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+async function typeHTML(el, html){
+  const tmp=document.createElement("div"); tmp.innerHTML=html;
+  if(reduced){ el.innerHTML=html; return; }
+  el.innerHTML=""; const cur=document.createElement("span"); cur.className="cursor";
+  async function walk(src,dst){
+    for(const node of [...src.childNodes]){
+      if(node.nodeType===3){
+        const txt=document.createTextNode(""); dst.appendChild(txt); dst.appendChild(cur);
+        for(const w of node.textContent.split(/(\s+)/)){ txt.textContent+=w; if(w.trim()) await sleep(16); }
+      }else{
+        const clone=node.cloneNode(false); dst.appendChild(clone); await walk(node,clone);
+      }
+    }
+  }
+  await walk(tmp,el); cur.remove();
+}
+
+async function ask(q){
+  if(busy) return; busy=true; asked.add(q);
+  document.body.classList.add("chatting");
+  input.value=""; send.disabled=true;
+  const qe=document.createElement("div"); qe.className="q"; qe.textContent=q; thread.appendChild(qe);
+  const ae=document.createElement("div"); ae.className="a"; ae.innerHTML='<span class="cursor"></span>'; thread.appendChild(ae);
+  qe.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"});
+  face.classList.add("thinking");
+  await sleep(500+Math.random()*300);
+  const ans = findAnswer(q);
+  face.classList.remove("thinking"); face.classList.add("talking");
+  await typeHTML(ae, ans.html);
+  face.classList.remove("talking");
+  renderChips([...(RELATED[ans.id]||[]), ...CHIPS]);
+  busy=false; send.disabled=!input.value.trim();
+  if(matchMedia("(pointer:fine)").matches) input.focus();
+}
+
+</script>
+</body>
+</html>
