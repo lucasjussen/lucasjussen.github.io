@@ -87,6 +87,16 @@
   .home{display:none;font-family:"JetBrains Mono",monospace;font-size:11px;color:#5f5f5f;background:none;border:0;cursor:pointer;margin-top:10px;padding:6px}
   body.chatting .home{display:block}
   .home:hover{color:var(--fg)}
+  .wa{position:fixed;top:16px;right:16px;z-index:10;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--fg);text-decoration:none;border:1px solid var(--faint);border-radius:999px;padding:8px 14px 8px 12px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);transition:border-color .2s,background .2s}
+  .wa:hover{border-color:#25d366;background:rgba(37,211,102,.08)}
+  .wa .dot{width:7px;height:7px;border-radius:50%;background:#25d366;box-shadow:0 0 8px #25d366}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;text-decoration:none;border-radius:999px;padding:10px 18px;transition:all .2s;border-bottom:0!important}
+  .btn.primary{background:var(--fg);color:#000!important}
+  .btn.primary:hover{opacity:.85}
+  .btn.ghost{border:1px solid var(--faint)!important;color:var(--fg)!important}
+  .btn.ghost:hover{border-color:#25d366!important}
+  .chip.cv{color:var(--fg);border-color:var(--faint)}
   footer{width:100%;max-width:680px;padding:28px 20px 24px;display:flex;justify-content:center;gap:22px;font-family:"JetBrains Mono",monospace;font-size:12px}
   footer a{color:#5f5f5f;text-decoration:none;transition:color .2s}
   footer a:hover{color:var(--fg)}
@@ -96,6 +106,8 @@
 </style>
 </head>
 <body>
+
+<a class="wa" href="https://wa.me/5541998255404?text=Ol%C3%A1%20Lucas%2C%20vi%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar!" target="_blank" rel="noopener" aria-label="Falar comigo no WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path fill="#fff" d="M8.6 7.2c.2-.4.5-.4.7-.4h.6c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.2.3 0 .6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.8.9c.3.1.4.2.5.3.1.2.1.8-.2 1.6-.3.8-1.6 1.5-2.2 1.5-.6.1-1.2.3-4-.8-3.3-1.3-5.4-4.7-5.6-4.9-.2-.2-1.3-1.8-1.3-3.4s.9-2.4 1.2-2.7z"/></svg>WhatsApp</a>
 
 <main>
   <div class="stage">
@@ -143,7 +155,9 @@
 const L = {
   linkedin: '<a href="https://linkedin.com/in/lucasjussen">LinkedIn</a>',
   github: '<a href="https://github.com/lucasjussen/ai-automation-portfolio">GitHub</a>',
-  cv: '<a href="curriculo.pdf">currículo em PDF</a>'
+  cv: '<a href="curriculo.pdf" target="_blank">currículo em PDF</a>',
+  wa: '<a href="https://wa.me/5541998255404?text=Ol%C3%A1%20Lucas%2C%20vi%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar!" target="_blank" rel="noopener">WhatsApp</a>',
+  botoes: '<div class="actions"><a class="btn primary" href="curriculo.pdf" target="_blank">↓ Ver currículo de Lucas</a><a class="btn ghost" href="https://wa.me/5541998255404?text=Ol%C3%A1%20Lucas%2C%20vi%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar!" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path fill="#fff" d="M8.6 7.2c.2-.4.5-.4.7-.4h.6c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.2.3 0 .6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.8.9c.3.1.4.2.5.3.1.2.1.8-.2 1.6-.3.8-1.6 1.5-2.2 1.5-.6.1-1.2.3-4-.8-3.3-1.3-5.4-4.7-5.6-4.9-.2-.2-1.3-1.8-1.3-3.4s.9-2.4 1.2-2.7z"/></svg>Falar no WhatsApp</a></div>'
 };
 
 const KB = [
@@ -235,11 +249,15 @@ const KB = [
     a:`<p>Moro na região de Curitiba (PR). Tenho disponibilidade para presencial e híbrido na região, e também topo remoto.</p>` },
 
   { id:"salario", k:["salario","pretensao","quanto cobra","remuneracao","valor"],
-    a:`<p>Prefiro conversar sobre isso diretamente, considerando a vaga e o formato. Me chama no ${L.linkedin}.</p>` },
+    a:`<p>Prefiro conversar sobre isso diretamente, considerando a vaga e o formato. Me chama no ${L.wa} ou no ${L.linkedin}.</p>` },
 
-  { id:"contato", k:["contato","falar","contrat","email","vaga","conversar","linkedin","disponivel","curriculo","cv","oportunidade"],
-    a:`<p>Estou aberto a oportunidades como analista de IA e automação. O melhor caminho é o ${L.linkedin}.</p>
-       <p>Você também pode baixar o meu ${L.cv} ou ver os projetos no ${L.github}.</p>` },
+  { id:"contato", k:["contato","falar","contrat","email","vaga","conversar","linkedin","disponivel","oportunidade","whats","zap","telefone","seu whatsapp","seu whats","seu numero","me passa","tem whatsapp","tem whats"],
+    a:`<p>Estou aberto a oportunidades como analista de IA e automação. Pode me chamar direto no ${L.wa} ou pelo ${L.linkedin}, e ver os projetos no ${L.github}.</p>
+       ${L.botoes}` },
+
+  { id:"cv", k:["ver curriculo","baixar","pdf do curriculo","meu curriculo","seu curriculo","curriculo"],
+    a:`<p>Aqui está: meu currículo de uma página, com experiência, projetos e stack.</p>
+       ${L.botoes}` },
 
   { id:"outras", k:["make","zapier","power automate","langchain","langgraph","crewai","uipath","rpa","openai","gpt","chatgpt","gemini"],
     a:`<p>Minha ferramenta principal é o n8n, e a API que mais uso é a do Claude. Make, Zapier e Power Automate seguem a mesma lógica de gatilhos, ações e integrações por API, então a adaptação é rápida. O Power Automate, inclusive, está nos meus estudos.</p>
@@ -250,7 +268,7 @@ const KB = [
        <p>Se quiser ver IA de verdade, dá uma olhada no RAG da LGPD no ${L.github}.</p>` }
 ];
 
-const CHIPS = ["O que você já automatizou?","Me fala do RAG da LGPD","Quais ferramentas você usa?","Como falar com você?"];
+const CHIPS = ["Ver currículo de Lucas","O que você já automatizou?","Me fala do RAG da LGPD","Quais ferramentas você usa?","Como falar com você?"];
 const RELATED = {
   sobre:["O que você já automatizou?","Como você trabalha?"],
   projetos:["Conta da conferência documental","Como foi o banco de horas?","E o bot de chamados?"],
@@ -281,7 +299,7 @@ function findAnswer(q){
     if(s>score){score=s;best=item;}
   }
   if(best) return { html:best.a, id:best.id };
-  return { id:null, html:`<p>Essa eu ainda não respondo por aqui, mas posso te contar na conversa. Me chama no ${L.linkedin}.</p>
+  return { id:null, html:`<p>Essa eu ainda não respondo por aqui, mas posso te contar na conversa. Me chama no ${L.wa} ou no ${L.linkedin}.</p>
      <p>Por aqui, posso falar dos meus projetos, das ferramentas que uso, do RAG da LGPD ou da minha trajetória.</p>` };
 }
 
@@ -305,8 +323,9 @@ let busy=false; const asked=new Set();
 
 function renderChips(list){
   chips.innerHTML="";
-  list.filter(c=>!asked.has(c)).slice(0,4).forEach(c=>{
-    const b=document.createElement("button"); b.className="chip"; b.type="button"; b.textContent=c;
+  const CV="Ver currículo de Lucas";
+  [CV, ...[...new Set(list)].filter(c=>c!==CV && !asked.has(c)).slice(0,4)].forEach(c=>{
+    const b=document.createElement("button"); b.className="chip"+(c===CV?" cv":""); b.type="button"; b.textContent=c;
     b.onclick=()=>ask(c); chips.appendChild(b);
   });
 }
