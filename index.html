@@ -263,7 +263,7 @@ const KB = [
        <p>LangChain e LangGraph ainda não usei em projeto; estão na fila, junto com Python para agentes. Prefiro dizer isso do que fingir que domino.</p>` },
 
   { id:"site", k:["site","esse chat","uma ia","e ia","chatbot","como funciona","ia de verdade","voce e uma ia","robo"],
-    a:`<p>Este chat não é uma IA: eu mesmo escrevi as respostas e o site encontra a mais próxima da sua pergunta. Preferi assim para não inventar nada sobre mim.</p>
+    a:`<p>Sim, eu uso IA aqui: as respostas são geradas pelo Claude a partir das informações que eu mesmo escrevi sobre mim, e ele não tem acesso a nada além disso. Se a IA estiver fora do ar, o site responde com um índice de respostas escritas por mim.</p>
        <p>Se quiser ver IA de verdade, dá uma olhada no RAG da LGPD no ${L.github}.</p>` }
 ];
 
@@ -367,6 +367,24 @@ async function typeHTML(el, html){
   await walk(tmp,el); cur.remove();
 }
 
+// Endereço do Worker (worker/chat-worker.js). Vazio = usa só as respostas escritas à mão.
+const CHAT_ENDPOINT = "https://chat-portfolio.lucasjussen.workers.dev/";
+const history = [];
+
+// Pede a resposta à IA; se falhar ou não houver endpoint, devolve null e o site usa o KB.
+async function askAI(q){
+  if(!CHAT_ENDPOINT) return null;
+  try{
+    const r = await fetch(CHAT_ENDPOINT,{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ question:q, history: history.slice(-6) })
+    });
+    if(!r.ok) return null;
+    const data = await r.json();
+    return data.answer ? data.answer : null;
+  }catch(e){ return null; }
+}
+
 async function ask(q){
   if(busy) return; busy=true; asked.add(q);
   document.body.classList.add("chatting");
@@ -375,12 +393,23 @@ async function ask(q){
   const ae=document.createElement("div"); ae.className="a"; ae.innerHTML='<span class="cursor"></span>'; thread.appendChild(ae);
   qe.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"});
   face.classList.add("thinking");
-  await sleep(500+Math.random()*300);
-  const ans = findAnswer(q);
+  const aiText = await askAI(q);
+  await sleep(300+Math.random()*250);
+  let html, chips;
+  if(aiText){
+    html = `<p>${aiText.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n+/g,"</p><p>")}</p>
+            <p class="tag">Resposta gerada por IA a partir das informações que eu escrevi</p>`;
+    chips = CHIPS;
+    history.push({role:"user",content:q},{role:"assistant",content:aiText});
+  }else{
+    const ans = findAnswer(q);
+    html = ans.html;
+    chips = [...(RELATED[ans.id]||[]), ...CHIPS];
+  }
   face.classList.remove("thinking"); face.classList.add("talking");
-  await typeHTML(ae, ans.html);
+  await typeHTML(ae, html);
   face.classList.remove("talking");
-  renderChips([...(RELATED[ans.id]||[]), ...CHIPS]);
+  renderChips(chips);
   busy=false; send.disabled=!input.value.trim();
   if(matchMedia("(pointer:fine)").matches) input.focus();
 }
