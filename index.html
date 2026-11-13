@@ -26,7 +26,7 @@
     --b:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     --m:"Geist Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
     --ease:cubic-bezier(.22,1,.36,1);
-    --hud:52px;
+    --hud:0px;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth;scroll-padding-top:calc(var(--hud) + 20px)}
@@ -293,6 +293,14 @@
   .wa::after{content:"Falar no WhatsApp";position:absolute;right:66px;white-space:nowrap;font-size:12.5px;font-weight:500;color:var(--paper);background:#111;border:1px solid var(--rule2);border-radius:8px;padding:6px 10px;opacity:0;pointer-events:none;transform:translateX(6px);transition:opacity .2s,transform .2s}
   .wa:hover::after{opacity:1;transform:none}
 
+  .toast{position:fixed;left:22px;bottom:22px;z-index:25;display:flex;align-items:center;gap:12px;padding:14px 14px 14px 16px;background:#fff;color:#1c1c1c;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.6);font:500 14.5px/1.3 var(--b);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s var(--ease),transform .3s var(--ease)}
+  .toast.show{opacity:1;transform:none;pointer-events:auto}
+  .toast .t-ok{width:24px;height:24px;border-radius:50%;background:var(--green);display:grid;place-items:center;color:#fff;flex-shrink:0}
+  .toast .t-ok .ico{width:14px;height:14px;stroke-width:3}
+  .toast button{background:none;border:0;color:#8a8a8a;cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;margin-left:6px}
+  .toast button:hover{color:#1c1c1c}
+  @media (max-width:560px){.toast{left:14px;bottom:18px;font-size:13.5px;padding:12px 10px 12px 14px;max-width:calc(100vw - 96px)}}
+
   /* ---------- telas menores ---------- */
   @media (max-width:1079px){
     .fan{grid-template-columns:minmax(0,1fr);gap:64px;max-width:560px;margin:0 auto}
@@ -377,15 +385,6 @@
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
 </svg>
 
-<header class="hud">
-  <a class="hud-id" href="#top" aria-label="Voltar ao início">
-    <svg viewBox="0 0 120 120" aria-hidden="true"><rect x="8" y="8" width="104" height="104" rx="36" fill="none" stroke="currentColor" stroke-width="8"/><ellipse cx="43" cy="54" rx="7" ry="11" fill="currentColor"/><ellipse cx="77" cy="54" rx="7" ry="11" fill="currentColor"/><path d="M44 80q16 10 32 0" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg>
-    <span>Lucas Jussen</span>
-  </a>
-  <span style="flex:1"></span>
-  <button class="btn sm ghost hud-stop" id="stopAuto" type="button">Parar</button>
-  <a class="btn sm primary hud-cta" href="#chat">Ir para o chat</a>
-</header>
 
 <a class="wa" href="https://wa.me/5541998255404?text=Ol%C3%A1%20Lucas%2C%20vi%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar!" target="_blank" rel="noopener" aria-label="Falar comigo no WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path fill="#25D366" d="M8.6 7.2c.2-.4.5-.4.7-.4h.6c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.2.3 0 .6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.8.9c.3.1.4.2.5.3.1.2.1.8-.2 1.6-.3.8-1.6 1.5-2.2 1.5-.6.1-1.2.3-4-.8-3.3-1.3-5.4-4.7-5.6-4.9-.2-.2-1.3-1.8-1.3-3.4s.9-2.4 1.2-2.7z"/></svg></a>
 
@@ -397,7 +396,7 @@
     <div>
       <p class="clock">Execução iniciada às <b id="t0">agora</b>, quando você abriu esta página.</p>
       <h1>Você acabou de disparar um workflow.</h1>
-      <p class="lede">Sou Lucas Jussen, analista de IA e automação. Este site executa em vez de descrever: cada etapa roda na sua frente, e a última é uma IA que responde sobre mim.</p>
+      <p class="lede">Olá, bem-vindo ao meu portfólio. Sou Lucas Jussen, trabalho com IA e automação. Este site executa em vez de descrever: cada etapa roda na sua frente, e a última é uma IA que responde sobre mim.</p>
       <div class="hero-cta">
         <button class="btn red" id="autoplay" type="button"><svg class="ico fill" aria-hidden="true"><use href="#i-play"/></svg>Executar automaticamente</button>
         <a class="btn ghost" href="#chat">Ir direto para o chat</a>
@@ -411,7 +410,6 @@
       </div>
       <div class="node-body" style="padding:0">
         <pre class="json" id="trigJson" aria-label="Dados da sua visita"></pre>
-        <p class="fine">Lido no seu navegador. Nada disso é enviado nem guardado.</p>
       </div>
       <span class="port out"></span>
     </div>
@@ -646,6 +644,12 @@
   <a href="curriculo.pdf" target="_blank" aria-label="Currículo (PDF)" title="Currículo (PDF)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></a>
 </footer>
 
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="t-ok" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></span>
+  <span>Workflow executed successfully</span>
+  <button type="button" id="toastX" aria-label="Fechar aviso">×</button>
+</div>
+
 <script>
 /* ============================================================
    Respostas escritas pelo Lucas. Cada tema tem palavras-chave;
@@ -860,8 +864,10 @@ function runEval(){
 const HOOKS = {
   "n-trigger": () => showJSON($("#trigJson"), TRIG),
   "n-perfil":  () => $$("#n-perfil .num").forEach(countUp),
-  "n-agent":   runEval
+  "n-agent":   runEval,
+  "n-chat":    () => { const t = $("#toast"); t.classList.add("show"); setTimeout(()=>t.classList.remove("show"), 6000); }
 };
+$("#toastX").addEventListener("click", () => $("#toast").classList.remove("show"));
 function exec(el){
   if(!el || el.classList.contains("done")) return;
   el.classList.add("done");
@@ -1059,7 +1065,6 @@ function startAuto(){
   auto = requestAnimationFrame(step);
 }
 $("#autoplay").addEventListener("click", startAuto);
-$("#stopAuto").addEventListener("click", stopAuto);
 ["wheel","touchstart","keydown"].forEach(ev=>addEventListener(ev, ()=>stopAuto(), {passive:true}));
 
 /* ============================================================
