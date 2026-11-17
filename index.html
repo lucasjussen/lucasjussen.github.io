@@ -197,6 +197,15 @@
   .eval .fine{margin-top:8px}
 
 
+  /* ---------- Conciliador (projeto público) ---------- */
+  .cc-shot{display:block;border-radius:14px;overflow:hidden;border:1px solid var(--rule);background:#fff;transition:border-color .25s}
+  .cc-shot:hover{border-color:var(--red)}
+  .cc-shot img{display:block;width:100%;height:auto}
+  .cc-flow{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:8px;counter-reset:f}
+  .cc-flow li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;font-size:14px;line-height:1.45;color:#d6d3cc}
+  .cc-flow li::before{counter-increment:f;content:counter(f);font:500 12px/24px var(--m);text-align:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--rule2);color:var(--grey)}
+  .cc-flow b{color:var(--paper);font-weight:500}
+
   /* ---------- Native (projeto pessoal) ---------- */
   .nv-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,48px);align-items:start}
   .nv-side{position:sticky;top:calc(var(--hud) + 24px)}
@@ -560,6 +569,48 @@
 
   <div class="gap"></div>
 
+  <!-- 4a. projeto público: Conciliador -->
+  <div class="stop l">
+    <section class="node" id="n-conc" data-node="Conciliador de faturamento com IA" style="--w:1040px">
+      <span class="port in"></span>
+      <div class="node-head">
+        <span class="node-ico"><svg class="ico" aria-hidden="true"><use href="#i-chart"/></svg></span>
+        <div><div class="node-name">Conciliador de faturamento com IA</div><div class="node-type">projeto público, 6 fases</div></div>
+        <span class="status"><span class="w">aguardando</span><span class="d">executado</span></span>
+      </div>
+      <div class="node-body">
+        <div class="nv-grid">
+          <div>
+            <p class="nv-kick">Contrato × nota fiscal × pagamento</p>
+            <h2>A conta é do SQL. A IA entra só onde a regra não alcança.</h2>
+            <p class="prose">Confere o faturamento recorrente de uma empresa de serviços: nota faltando, valor errado, pagamento a menor, inadimplência. Regras em SQL acham os erros; nos pagamentos ambíguos, um agente investiga e propõe a ligação, e só grava depois que uma pessoa aprova.</p>
+            <div class="nv-nums">
+              <div><b>100%</b><span>de precisão com o agente; só com regras, 64%</span></div>
+              <div><b>30/30</b><span>casos certos na avaliação do agente</span></div>
+              <div><b>12/12</b><span>ataques de prompt injection barrados</span></div>
+            </div>
+            <ol class="cc-flow">
+              <li><span><b>Regras em SQL</b> acham 100% dos 25 erros plantados na base de teste.</span></li>
+              <li><span><b>Agente LangGraph</b> investiga os casos ambíguos com consultas ao banco e pausa para aprovação humana; o Redis guarda a pausa e o Langfuse rastreia cada passo.</span></li>
+              <li><span><b>E-mails e PDFs de clientes</b> são lidos pelo Claude Haiku e conferidos contra o contrato, nunca aceitos de olhos fechados.</span></li>
+              <li><span><b>Integração</b>: API em FastAPI, servidor MCP e n8n rodando a conciliação toda manhã com resumo por e-mail.</span></li>
+              <li><span><b>Painel no Power BI</b> com valor em risco, histórico diário e faixas de atraso, lendo o mesmo número da API.</span></li>
+            </ol>
+            <div class="nv-tags" style="margin-top:20px"><span>Python</span><span>PostgreSQL</span><span>LangGraph</span><span>Redis</span><span>Claude API</span><span>Langfuse</span><span>FastAPI</span><span>MCP</span><span>n8n</span><span>Power BI</span><span>Docker</span></div>
+          </div>
+          <div class="nv-side">
+            <a class="cc-shot" href="img/conciliador/painel.webp" target="_blank" rel="noopener"><img src="img/conciliador/painel.webp" alt="Painel no Power BI: R$ 45.186,23 em risco, 39 divergências, 16 clientes afetados, gráfico do risco por dia, por tipo, tabela de clientes e notas vencidas por faixa de atraso" width="1160" height="634" loading="lazy"></a>
+            <p class="nv-shots-cap">Painel no Power BI, com dados fictícios. 13 notas vencidas somam 55% do risco, e 7 delas passam de 60 dias.</p>
+            <div class="nv-actions" style="margin-top:16px"><a class="btn ghost sm" href="https://github.com/lucasjussen/conciliador-ia" target="_blank" rel="noopener">Ver código e resultados no GitHub</a></div>
+          </div>
+        </div>
+      </div>
+      <span class="port out"></span>
+    </section>
+  </div>
+
+  <div class="gap"></div>
+
   <!-- 4. agente RAG -->
   <div class="stop r">
     <section class="node" id="n-agent" data-node="Assistente de LGPD com RAG" style="--w:960px">
@@ -725,12 +776,12 @@
       </div>
       <div class="node-body">
         <dl class="tools">
-          <div><dt>IA</dt><dd>API do Claude, engenharia de prompt, agentes com ferramentas, RAG, embeddings e evals</dd></div>
+          <div><dt>IA</dt><dd>API do Claude, LangGraph, agentes com ferramentas, human-in-the-loop, RAG, embeddings, evals e MCP</dd></div>
           <div><dt>Automação</dt><dd>n8n self-hosted, webhooks, APIs REST, Microsoft Graph, APIs da Meta e Bitrix24</dd></div>
-          <div><dt>Dados</dt><dd>PostgreSQL, pgvector, Supabase, SQL, Google Sheets e Apps Script</dd></div>
-          <div><dt>Infraestrutura</dt><dd>Docker, Ollama, VPS Linux e Git</dd></div>
+          <div><dt>Dados</dt><dd>PostgreSQL, pgvector, Supabase, SQL, Power BI, Google Sheets e Apps Script</dd></div>
+          <div><dt>Infraestrutura</dt><dd>Docker, Redis, Langfuse, FastAPI, Ollama, VPS Linux e Git</dd></div>
           <div><dt>Linguagens</dt><dd>JavaScript, SQL, PowerShell e Python</dd></div>
-          <div><dt>Próximos passos</dt><dd>LangChain e LangGraph, nos próximos projetos</dd></div>
+          <div><dt>Próximos passos</dt><dd>Testar o conciliador com extratos reais anonimizados</dd></div>
         </dl>
         <p class="sub">Certificados da Claude Academy (Anthropic), novembro de 2026</p>
         <ul class="certs">
@@ -815,11 +866,12 @@ const KB = [
 
   { id:"sobre", k:["quem","sobre voce","se apresent","apresentacao","resumo","quem e","fale de voce","fala de voce","o que voce faz"],
     a:`<p>Sou o Lucas, analista de IA e automação em Curitiba. Pego rotinas manuais, entendo como elas funcionam de verdade e transformo em fluxos que rodam sozinhos, deixando a pessoa só onde o julgamento humano faz diferença.</p>
-       <p>No último emprego fui o único responsável por IA e automação da empresa e coloquei <b>15 automações e sistemas internos em produção</b>, usados por RH, jurídico, operacional, comercial, marketing e TI.</p>` },
+       <p>No último emprego cuidei de IA e automação ao lado do meu coordenador e coloquei <b>15 automações e sistemas internos em produção</b>, usados por RH, jurídico, operacional, comercial, marketing e TI.</p>` },
 
   { id:"projetos", k:["automatiz","projeto","fez","criou","construiu","exemplo","producao","entreg","resultado","ganho","portfolio","trabalhos"],
     a:`<p>Alguns dos que mais geraram resultado:</p>
        <ul>
+         <li><b>Conciliador de faturamento com IA</b> (projeto público): regras em SQL, agente LangGraph com aprovação humana, evals de custo e segurança e painel no Power BI.</li>
          <li><b>Conferência documental com IA</b>: lê e-mails, extrai os PDFs e confere os valores com a API do Claude. Devolveu cerca de <b>3 dias de trabalho por ciclo</b> ao jurídico.</li>
          <li><b>Banco de horas</b>: criado do zero. Pipeline diário em n8n; cada funcionário passou a consultar o próprio saldo.</li>
          <li><b>Bot de chamados de TI</b>: comando <span class="tag">/chamado</span> no chat, fila centralizada e status visível para a coordenação.</li>
@@ -828,6 +880,13 @@ const KB = [
          <li><b>Native</b> (projeto pessoal): app para Windows que traz o iPhone para o PC, com notificações e arquivos no estilo do AirDrop.</li>
        </ul>
        <p>Pergunte sobre qualquer um deles.</p>` },
+
+  { id:"conciliador", k:["concilia","faturamento","langgraph","redis","langfuse","fastapi","mcp","power bi","powerbi","human in the loop","aprovacao humana","prompt injection","injection","nota fiscal","inadimpl"],
+    a:`<p>O <b>Conciliador de faturamento com IA</b> confere contrato × nota fiscal × pagamento. Regras em SQL acham os erros (100% dos 25 plantados) e a IA só entra onde não existe regra clara.</p>
+       <p>Nos pagamentos ambíguos, um <b>agente LangGraph</b> consulta o banco, propõe a ligação e pausa para uma pessoa aprovar; o Redis guarda a pausa e o Langfuse rastreia. Com ele, a precisão foi de 64% para 100%. E-mails de clientes são lidos pelo Claude Haiku e conferidos contra o contrato: <b>12 de 12 ataques de prompt injection</b> foram barrados, com custo medido por caso.</p>
+       <p>Tem API em FastAPI, servidor MCP, n8n rodando todo dia e um painel no Power BI.</p>
+       <p class="tag">Python · PostgreSQL · LangGraph · Redis · Claude · Langfuse · FastAPI · MCP · n8n · Power BI</p>
+       <p>Código e resultados no <a href="https://github.com/lucasjussen/conciliador-ia" target="_blank" rel="noopener">GitHub</a>.</p>` },
 
   { id:"conferencia", k:["conferencia","document","pdf","valores","financeir","claude api","3 dias","tres dias"],
     a:`<p>O jurídico conferia valores de documentos financeiros na mão. Montei um fluxo que lê a caixa de e-mail via Microsoft Graph, extrai os PDFs, manda para a API do Claude conferir e registra cada caso no CRM.</p>
@@ -863,9 +922,9 @@ const KB = [
     a:`<p>Montei no Bitrix24 o funil completo de Recrutamento &amp; Seleção, da triagem ao onboarding: nomeação automática dos cards, campos obrigatórios por etapa, e-mails automáticos aos candidatos, lembrete dois dias após a entrevista e criação automática da tarefa de onboarding de TI na contratação.</p>
        <p>Resultado: fim do controle manual e nenhum candidato sem retorno.</p>` },
 
-  { id:"sdr", k:["sdr","painel","dashboard","supabase","ranking","remarketing","bi","power bi"],
+  { id:"sdr", k:["sdr","painel","dashboard","supabase","ranking","remarketing"],
     a:`<p>Para a gestão acompanhar os SDRs, sincronizei a planilha deles com um PostgreSQL (Supabase) via n8n, criei uma API por webhook e um painel web com ranking e filtros. A gestão passou a ver a operação em tempo real, sem consolidar planilhas.</p>
-       <p>Ainda não trabalhei com Power BI, mas dashboards alimentados por banco de dados já fazem parte do meu dia a dia.</p>` },
+       <p>No Conciliador também montei um painel no Power BI lendo visões do PostgreSQL.</p>` },
 
   { id:"crm", k:["crm","omnichannel","prospec","whatsapp","instagram","meta"],
     a:`<p>Projetei e desenvolvi um CRM que une Instagram, WhatsApp e e-mail em um único funil para 40 SDRs, com n8n, Bitrix24, APIs da Meta e a API do Claude.</p>
@@ -873,15 +932,15 @@ const KB = [
 
   { id:"stack", k:["ferramenta","stack","tecnolog","usa","sabe","n8n","api","integra","webhook","docker","excel","sheets","apps script"],
     a:`<ul>
-         <li><b>IA:</b> API do Claude, engenharia de prompt, agentes, RAG, embeddings, evals</li>
+         <li><b>IA:</b> API do Claude, LangGraph, agentes, human-in-the-loop, RAG, embeddings, evals, MCP</li>
          <li><b>Automação:</b> n8n self-hosted, webhooks, APIs REST, Microsoft Graph, APIs da Meta, Bitrix24</li>
-         <li><b>Dados:</b> PostgreSQL, pgvector, Supabase, SQL, Excel, Google Sheets e Apps Script</li>
-         <li><b>Infra:</b> Docker, Ollama, VPS Linux, Git</li>
+         <li><b>Dados:</b> PostgreSQL, pgvector, Supabase, SQL, Power BI, Excel, Google Sheets e Apps Script</li>
+         <li><b>Infra:</b> Docker, Redis, Langfuse, FastAPI, Ollama, VPS Linux, Git</li>
          <li><b>Linguagens:</b> JavaScript, SQL, PowerShell, Python</li>
        </ul>` },
 
   { id:"codigo", k:["python","programa","codigo","javascript","linguagem","java","sql"],
-    a:`<p>No dia a dia escrevo JavaScript dentro dos fluxos do n8n, SQL para os bancos e PowerShell para automações de TI. Uso Python para scripts e sigo me aprofundando nele.</p>
+    a:`<p>No dia a dia escrevo JavaScript dentro dos fluxos do n8n, SQL para os bancos e PowerShell para automações de TI. Em Python construí o Conciliador inteiro: agente LangGraph, API FastAPI, servidor MCP e testes.</p>
        <p>Trabalho com IA ao lado na hora de programar, mas faço questão de entender o que o código faz antes de colocar em produção.</p>` },
 
   { id:"trajetoria", k:["juridic","advoc","escritorio","antes","historia","carreira","trajet","anos"],
@@ -912,20 +971,21 @@ const KB = [
     a:`<p>Aqui está: meu currículo de uma página, com experiência, projetos e stack.</p>
        ${L.botoes}` },
 
-  { id:"outras", k:["make","zapier","power automate","langchain","langgraph","crewai","uipath","rpa","openai","gpt","chatgpt","gemini"],
+  { id:"outras", k:["make","zapier","power automate","langchain","crewai","uipath","rpa","openai","gpt","chatgpt","gemini"],
     a:`<p>Minha ferramenta principal é o n8n, e a API que mais uso é a do Claude. Make, Zapier e Power Automate seguem a mesma lógica de gatilhos, ações e integrações por API, então a adaptação é rápida. O Power Automate, inclusive, está nos meus estudos.</p>
-       <p>LangChain e LangGraph ainda não usei em projeto; estão na fila, junto com Python para agentes. Prefiro dizer isso do que fingir que domino.</p>` },
+       <p>LangGraph eu uso no Conciliador, com aprovação humana e estado no Redis. LangChain, só as partes que o LangGraph usa; CrewAI e UiPath não usei em projeto.</p>` },
 
   { id:"site", k:["site","esse chat","uma ia","e ia","chatbot","como funciona","ia de verdade","voce e uma ia","robo"],
     a:`<p>Sim, eu uso IA aqui: as respostas são geradas pelo Claude a partir das informações que eu mesmo escrevi sobre mim, e ele não tem acesso a nada além disso. Se a IA estiver fora do ar, o site responde com um índice de respostas escritas por mim.</p>
        <p>Se quiser ver IA de verdade, dá uma olhada no RAG da LGPD no ${L.github}.</p>` }
 ];
 
-const CHIPS = ["Ver currículo de Lucas","O que você já automatizou?","O que é o Native?","Me fala do RAG da LGPD","Quais ferramentas você usa?","Como falar com você?"];
+const CHIPS = ["Ver currículo de Lucas","O que você já automatizou?","Me fala do Conciliador","O que é o Native?","Me fala do RAG da LGPD","Quais ferramentas você usa?","Como falar com você?"];
 const RELATED = {
   sobre:["O que você já automatizou?","Como você trabalha?"],
   projetos:["Conta da conferência documental","Como foi o banco de horas?","E o bot de chamados?"],
   conferencia:["Como foi o banco de horas?","Me fala do RAG da LGPD"],
+  conciliador:["Você trabalha com agentes?","Quais ferramentas você usa?"],
   rag:["Você trabalha com agentes?","Quais ferramentas você usa?"],
   native:["O que você já automatizou?","Quais ferramentas você usa?"],
   agentes:["Me fala do RAG da LGPD","O que você já automatizou?"],

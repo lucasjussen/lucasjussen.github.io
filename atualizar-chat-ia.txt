@@ -1,0 +1,21 @@
+ATUALIZAR OS FATOS DA IA DO CHAT (Cloudflare Worker, arquivo facts.js)
+
+Abra o facts.js do worker (no painel da Cloudflare: Workers > seu worker > Editar código,
+ou na pasta do worker no seu PC) e faça as 3 mudanças abaixo. Depois clique em Deploy
+(ou rode "npx wrangler deploy" na pasta do worker).
+
+1) TROQUE o trecho:
+Foi o único responsável por IA e automação.
+POR:
+Cuidou de IA e automação junto com o coordenador.
+
+2) APAGUE a linha inteira que começa com:
+[ferramentas] Não usou em projeto: LangChain, LangGraph
+E COLOQUE NO LUGAR:
+[ferramentas] Não usou em projeto: CrewAI, UiPath. Power Automate está nos estudos.
+
+3) COLE esta linha logo abaixo da linha que começa com "- [lgpd]":
+- [conciliador] Conciliador de Faturamento com IA (projeto público, 6 fases, nov/2026): confere contrato × nota fiscal × pagamento de uma empresa de serviços fictícia. Regras em SQL (PostgreSQL) acham 100% dos 25 erros plantados. Nos pagamentos ambíguos, um agente LangGraph consulta o banco com ferramentas somente leitura, propõe a ligação e pausa com interrupt para aprovação humana; o Redis guarda a pausa e o Langfuse rastreia. Com o agente e a revisão, a precisão foi de 64% para 100%; o agente acertou 30/30 casos na avaliação, sem nenhum erro com confiança alta, a cerca de US$ 0,025 por pagamento. E-mails e PDFs de clientes são lidos pelo Claude Haiku e conferidos contra o contrato; 12 de 12 ataques de prompt injection barrados (IA + regra), sem alarme falso. Tem API em FastAPI com chave, servidor MCP somente leitura, n8n rodando a conciliação toda manhã com e-mail, e painel no Power BI (valor em risco, histórico diário, faixas de atraso) lendo visões do Postgres com usuário só de leitura. Limite assumido: os dados são gerados, o próximo passo é testar com extratos reais anonimizados. Código: github.com/lucasjussen/conciliador-ia
+
+E na linha "[ferramentas] Ferramentas:", acrescente dentro de IA: LangGraph, human-in-the-loop, MCP;
+dentro de dados: Power BI; dentro de infra: Redis, Langfuse, FastAPI.
